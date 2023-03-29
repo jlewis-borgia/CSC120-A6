@@ -1,12 +1,149 @@
-/* This is a stub for the Library class */
-public class Library {
+import java.util.Hashtable;
+import java.util.Enumeration;
 
-    public Library() {
-      System.out.println("You have built a library: 📖");
+/**
+ * subclass that creates libraries in which books can be added, removed, checked out, and collections printed out
+ */
+public class Library extends Building{
+
+  private Hashtable<String, Boolean> collection;
+  String key_avail;
+
+    public Library(String name, String address, int nFloors) {
+      super(name, address, nFloors);
+      this.collection = new Hashtable<String, Boolean>();
     }
-  
+
+    /**
+     * adds a book title to a library as long as the book isn't already in the library
+     * @param title
+     */
+    public void addTitle(String title) {
+      if (this.collection.containsKey(title)) {
+        throw new RuntimeException(title + " already exists in this library.");
+      }
+      this.collection.put(title, true);
+      System.out.println(title + " has just been added to " + this.name + " Library.");
+    }
+
+    /**
+     * removes a title from a library after first checking that the title is in the library
+     * @param title
+     * @return title of book that was removed from the library
+     */
+    public String removeTitle(String title) {
+      if(this.collection.containsKey(title)) {
+        this.collection.remove(title);
+        System.out.println(title + " has just been removed from " + this.name + " Library.");
+        return title;
+      } else {
+        throw new RuntimeException(title + " is not in this library.");
+      }
+    }
+
+    /**
+     * checks out a title from a library after checking that it is not currently checked out
+     * @param title
+     */
+    public void checkOut(String title) {
+      if(this.collection.containsKey(title)) {
+        this.collection.replace(title, true, false);
+        System.out.println(title + " has just been checked out of the " + this.name + " Library.");
+      } else {
+        throw new RuntimeException(title + " is not in this library");
+      }
+    }
+
+    /**
+     * returns a book to a library after checking that it was checked out
+     * @param title
+     */
+    public void returnBook(String title) {
+      if (this.collection.containsKey(title)) {
+        this.collection.replace(title, false, true);
+        System.out.println(title + " has just been returned to " + this.name + " Library." );
+      } else {
+        throw new RuntimeException(title + " is not in this library");
+      }
+    }
+
+    /**
+     * Checks whether or not a collection contains a title
+     * @param title
+     * @return true/false whether or not a title is in the collection of a library
+     */
+    public boolean containsTitle(String title) {
+      if (this.collection.containsKey(title)) {
+        System.out.println(title + " is in the library's collection.");
+      } else {
+        System.out.println(title + " is not in the library's collection.");
+      }
+      return this.collection.containsKey(title);
+    }
+
+    /**
+     * checks whether or not a title is available to be checked out in a collection of a library
+     * @param title
+     * @return true if the title in the collection is available and false if it's either not available or not in the collection
+     */
+    public boolean isAvailable(String title) {
+      if (collection.get(title) == null) {
+        System.out.println(title + " is not in this library.");
+        return false;
+      } else {
+        if (collection.get(title) == false) {
+          System.out.println(title + " is not available.");
+          return collection.get(title);
+        } else {
+          System.out.println(title + " is available.");
+          return collection.get(title);
+        }
+      }
+    }
+
+    /**
+     * prints out the collection of a library including whether or not each book is available in a user friendly way
+     */
+    public void printCollection() {
+      System.out.println(this.name + " Library Collection:");
+      Enumeration<String> Enum = collection.keys();
+      while (Enum.hasMoreElements()) {
+        String key = Enum.nextElement();
+        if (collection.get(key) == true) {
+          key_avail = "yes";
+        }
+        if (collection.get(key) == false) {
+          key_avail = "no";
+        }
+        System.out.println("Title : " + key + "\t Available : " + key_avail);
+      }
+    }
+
+    /**
+     * prints out a description of a library including its name, address, number of floors, and number of books in its collection
+     */
+    public String toString() {
+      String description2 = super.toString();
+      description2 += " There are currently " + this.collection.size() + " books in this library's collection.";
+      return description2;
+    }
+
+    /**
+     * main method that builds libraries calls other methods from the class
+     * @param args
+     */
     public static void main(String[] args) {
-      new Library();
+      Library neilson = new Library("Neilson", "7 Neilson Drive", 4);
+      neilson.addTitle("The Lorax by Dr. Seuss");
+      neilson.addTitle("War and Peace by Leo Tolstoy");
+      neilson.addTitle("Julius Caesar by William Shakespeare");
+      System.out.println(neilson);
+      neilson.removeTitle("The Lorax by Dr. Seuss");
+      neilson.checkOut("War and Peace by Leo Tolstoy");
+      neilson.checkOut("Julius Caesar by William Shakespeare");
+      neilson.returnBook("War and Peace by Leo Tolstoy");
+      neilson.isAvailable("Julius Caesar by William Shakespeare");
+      neilson.containsTitle("War and Peace by Leo Tolstoy");
+      neilson.printCollection();
     }
-  
-  }
+}
